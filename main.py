@@ -2,36 +2,36 @@ import sys
 from random import randint
 
 from PyQt6.QtGui import QColor, QPainter
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
-from  PyQt6 import uic
+from PyQt6.QtWidgets import QApplication, QMainWindow
+import UI
 
 
-class MyWd(QMainWindow):
+class MyWd(QMainWindow, UI.Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('UI.ui', self)
+        self.setupUi(self)
         self.pushButton.clicked.connect(self.paintRound)
-        self.YELLOW = QColor(255, 255, 0)
         self.qp = QPainter()
         self.rounds = []
         self.size_ = self.size()
 
     def paintRound(self):
-        new_round = randint(0, self.size_.width()), randint(0, self.size_.height()), randint(10, 70)
+        new_round = {'x': randint(0, self.size_.width()), 'y': randint(0, self.size_.height()),
+                     'r': randint(10, 70),
+                     'color': QColor(randint(0, 255), randint(0, 255), randint(0, 255))}
         self.rounds.append(new_round)
         self.update()
 
     def paintEvent(self, a0):
         try:
             self.qp.begin(self)
-            self.qp.setBrush(self.YELLOW)
             for i in self.rounds:
-                self.qp.drawEllipse(*i, i[-1])
+                self.qp.setBrush(i['color'])
+                self.qp.drawEllipse(i['x'], i['y'], i['r'], i['r'])
             self.qp.end()
 
         except Exception as e:
             print(e)
-            # QMessageBox.critical(self, 'Error', f'{e}')
 
 
 if __name__ == '__main__':
